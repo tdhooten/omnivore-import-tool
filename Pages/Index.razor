@@ -1,0 +1,82 @@
+﻿@page "/"
+
+@inject ConversionService Converter
+@inject IHxMessengerService Messenger
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Index</PageTitle>
+
+<h1>Omnivore Import Tool</h1>
+
+<HxSelect TItem="string"
+            TValue="string"
+            Label="Import from"
+            Data="@formats"
+@bind-Value="@inputFormat"
+            TextSelector="@(p => p.ToString())"
+            ValueSelector="@(p => p.ToString())"
+            Nullable="true"
+            NullText="-select format-"
+            NullDataText="Loading options..." />
+<p />
+@if (_fileUploading)
+{
+    <HxSpinner Color="ThemeColor.Primary" />
+}
+else
+{
+    <HxInputFile Label="Import Spreadsheet" Accept=".csv" OnChange="ConvertFile" MaxFileSize="10000000" Multiple="false" />
+}
+
+@code {
+    private const string FileName = "OmnivoreImport.csv";
+    private bool _fileUploading;
+    private IEnumerable<string> formats = Enumerable.Empty<string>();
+    private string? inputFormat;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        formats = Enum.GetValues(typeof(Formats)).Cast<Formats>().Select(v => v.ToString());
+    }
+
+    private async Task ConvertFile(InputFileChangeEventArgs e)
+    {
+        switch (inputFormat)
+        {
+            case "Raindrop":
+                _fileUploading = true;
+
+                foreach (var file in e.GetMultipleFiles(1))
+                {
+                    try
+                    {
+                        using MemoryStream stream = new();
+                        await file.OpenReadStream(maxAllowedSize: 10000000).CopyToAsync(stream);
+                        var result = Converter.ConvertRaindrop(stream);
+
+                        using var streamRef = new DotNetStreamReference(stream: result);
+                        await JsRuntime.InvokeVoidAsync("downloadFileFromStream", FileName, streamRef);
+
+                        Messenger.AddInformation($"Successfully converted file from Raindrop to Omnivore format.");
+                        _fileUploading = false;
+                    }
+                    catch
+                    {
+                        Messenger.AddError("Error converting file from Raindrop to Omnivore format!", "Please try again later. If the error continues, contact support for assistance.");
+                    }
+                }
+                break;
+            default:
+                Messenger.AddError("No input format specified!");
+                break;
+        }
+
+        _fileUploading = false;
+    }
+
+    internal enum Formats
+    {
+        Raindrop
+    }
+}
