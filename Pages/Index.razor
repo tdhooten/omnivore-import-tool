@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 
 @inject ConversionService Converter
 @inject IHxMessengerService Messenger
@@ -70,7 +70,7 @@
                     using var streamRef = new DotNetStreamReference(stream: result);
                     await JsRuntime.InvokeVoidAsync("downloadFileFromStream", FileName, streamRef);
 
-                    Messenger.AddInformation($"Successfully converted file from Raindrop to Omnivore format.");
+                    Messenger.AddInformation($"Successfully converted file from {_inputFormat} to Omnivore format.");
                     _fileUploading = false;
                 }
                 catch
