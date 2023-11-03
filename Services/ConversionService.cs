@@ -20,11 +20,12 @@ public class ConversionService
             var output = new OmnivoreModel()
             {
                 url = record.url,
-                labels = "[" + record.tags + "]",
             };
 
             var createdUtc = new DateTimeOffset(DateTime.Parse(record.created).ToUniversalTime());
             output.saved_at = createdUtc.ToUnixTimeMilliseconds().ToString();
+
+            if (!String.IsNullOrEmpty(record.tags)) output.labels = "[" + record.tags + "]";
 
             if (record.folder.Contains("archive", StringComparison.InvariantCultureIgnoreCase)) output.state = "ARCHIVED";
 
