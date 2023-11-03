@@ -6,27 +6,35 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Omnivore Import Tool</h1>
+<h1 style="text-align: center">Omnivore Import Tool</h1>
 
-<HxSelect TItem="string"
-            TValue="string"
-            Label="Import from"
-            Data="@formats"
-@bind-Value="@inputFormat"
-            TextSelector="@(p => p.ToString())"
-            ValueSelector="@(p => p.ToString())"
-            Nullable="true"
-            NullText="-select format-"
-            NullDataText="Loading options..." />
-<p />
-@if (_fileUploading)
-{
-    <HxSpinner Color="ThemeColor.Primary" />
-}
-else
-{
-    <HxInputFile Label="Import Spreadsheet" Accept=".csv" OnChange="ConvertFile" MaxFileSize="10000000" Multiple="false" />
-}
+<div class="container">
+    <div class="row">
+        <div class="col-sm" />
+        <div class="col-lg">
+            <HxSelect TItem="string"
+                      TValue="string"
+                      Label="Import from"
+                      Data="@formats"
+            @bind-Value="@inputFormat"
+                      TextSelector="@(p => p.ToString())"
+                      ValueSelector="@(p => p.ToString())"
+                      Nullable="true"
+                      NullText="-select format-"
+                      NullDataText="Loading options..." />
+            <p />
+            @if (_fileUploading)
+            {
+                <HxSpinner Color="ThemeColor.Primary" />
+            }
+            else
+            {
+                <HxInputFile Label="Import Spreadsheet" Accept=".csv" OnChange="ConvertFile" MaxFileSize="10000000" Multiple="false" />
+            }
+        </div>
+        <div class="col-sm" />
+    </div>
+</div>
 
 @code {
     private const string FileName = "OmnivoreImport.csv";
