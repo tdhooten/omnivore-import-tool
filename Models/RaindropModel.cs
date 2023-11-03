@@ -2,13 +2,13 @@
 
 public class RaindropModel
 {
-    public string title { get; set; }
-    public string note { get; set; }
-    public string excerpt { get; set; }
-    public string url { get; set; }
-    public string folder { get; set; }
-    public string tags { get; set; }
-    public string created { get; set; }
-    public string cover { get; set; }
-    public string highlights { get; set; }
+    public string title { get; set; } = String.Empty;
+    public string note { get; set; } = String.Empty;
+    public string excerpt { get; set; } = String.Empty;
+    public string url { get; set; } = String.Empty;
+    public string folder { get; set; } = String.Empty;
+    public string tags { get; set; } = String.Empty;
+    public string created { get; set; } = String.Empty;
+    public string cover { get; set; } = String.Empty;
+    public string highlights { get; set; } = String.Empty;
 }
