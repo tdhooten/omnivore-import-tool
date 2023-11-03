@@ -14,7 +14,7 @@
         <div class="col-lg">
             <HxSelect TItem="string"
                       TValue="string"
-                      Label="Import from"
+                      Label="Import From"
                       Data="@formats"
             @bind-Value="@inputFormat"
                       TextSelector="@(p => p.ToString())"
@@ -29,7 +29,7 @@
             }
             else
             {
-                <HxInputFile Label="Import Spreadsheet" Accept=".csv" OnChange="ConvertFile" MaxFileSize="10000000" Multiple="false" />
+                <HxInputFile Label="Upload CSV" Accept=".csv" OnChange="ConvertFile" MaxFileSize="10000000" Multiple="false" />
             }
         </div>
         <div class="col-sm" />
