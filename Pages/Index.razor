@@ -50,37 +50,37 @@
 
     private async Task ConvertFile(InputFileChangeEventArgs e)
     {
-        switch (inputFormat)
+        if (String.IsNullOrEmpty(inputFormat))
         {
-            case "Raindrop":
-                _fileUploading = true;
-
-                foreach (var file in e.GetMultipleFiles(1))
-                {
-                    try
-                    {
-                        using MemoryStream stream = new();
-                        await file.OpenReadStream(maxAllowedSize: 10000000).CopyToAsync(stream);
-                        var result = Converter.ConvertRaindrop(stream);
-
-                        using var streamRef = new DotNetStreamReference(stream: result);
-                        await JsRuntime.InvokeVoidAsync("downloadFileFromStream", FileName, streamRef);
-
-                        Messenger.AddInformation($"Successfully converted file from Raindrop to Omnivore format.");
-                        _fileUploading = false;
-                    }
-                    catch
-                    {
-                        Messenger.AddError("Error converting file from Raindrop to Omnivore format!", "Please try again later. If the error continues, contact support for assistance.");
-                    }
-                }
-                break;
-            default:
-                Messenger.AddError("No input format specified!");
-                break;
+            Messenger.AddError("No input format specified!");
+            return;
         }
+        else
+        {
+            _fileUploading = true;
 
-        _fileUploading = false;
+            foreach (var file in e.GetMultipleFiles(1))
+            {
+                try
+                {
+                    using MemoryStream stream = new();
+                    await file.OpenReadStream(maxAllowedSize: 10000000).CopyToAsync(stream);
+                    var result = Converter.ConvertFile(stream, inputFormat);
+
+                    using var streamRef = new DotNetStreamReference(stream: result);
+                    await JsRuntime.InvokeVoidAsync("downloadFileFromStream", FileName, streamRef);
+
+                    Messenger.AddInformation($"Successfully converted file from Raindrop to Omnivore format.");
+                    _fileUploading = false;
+                }
+                catch
+                {
+                    Messenger.AddError("Error converting file from Raindrop to Omnivore format!", "Please try again later. If the error continues, contact support for assistance.");
+                }
+            }
+
+            _fileUploading = false;
+        }
     }
 
     internal enum Formats
