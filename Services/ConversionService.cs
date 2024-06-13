@@ -8,19 +8,18 @@ public class ConversionService
 {
     public Stream ConvertFile(Stream stream, string inputFormat)
     {
-        var outputRecords = Enumerable.Empty<OmnivoreModel>();
+        IEnumerable<OmnivoreModel> outputRecords = Enumerable.Empty<OmnivoreModel>();
 
         stream.Position = 0;
         using var reader = new StreamReader(stream);
         using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
-        var records = csvReader.GetRecords<RaindropModel>();
+        IEnumerable<RaindropModel>? records = csvReader.GetRecords<RaindropModel>();
 
-        switch (inputFormat)
+        outputRecords = inputFormat switch
         {
-            case "Raindrop":
-                outputRecords = ConvertRaindrop(records);
-                break;
-        }
+            "Raindrop" => ConvertRaindrop(records),
+            _ => outputRecords
+        };
 
         using var outputStream = new MemoryStream();
         using var writer = new StreamWriter(outputStream);
@@ -33,19 +32,20 @@ public class ConversionService
 
     private static IEnumerable<OmnivoreModel> ConvertRaindrop(IEnumerable<RaindropModel> records)
     {
-        foreach (var record in records)
+        foreach (RaindropModel record in records)
         {
-            var output = new OmnivoreModel()
+            var output = new OmnivoreModel
             {
-                url = record.url,
+                Url = record.Url
             };
 
-            var createdUtc = new DateTimeOffset(DateTime.Parse(record.created).ToUniversalTime());
-            output.saved_at = createdUtc.ToUnixTimeMilliseconds().ToString();
+            var createdUtc = new DateTimeOffset(DateTime.Parse(record.Created).ToUniversalTime());
+            output.SavedAt = createdUtc.ToUnixTimeMilliseconds().ToString();
 
-            if (!String.IsNullOrEmpty(record.tags)) output.labels = "[" + record.tags + "]";
+            if (!String.IsNullOrEmpty(record.Tags)) output.Labels = "[" + record.Tags + "]";
 
-            if (record.folder.Contains("archive", StringComparison.InvariantCultureIgnoreCase)) output.state = "ARCHIVED";
+            if (record.Folder.Contains("archive", StringComparison.InvariantCultureIgnoreCase))
+                output.State = "ARCHIVED";
 
             yield return output;
         }

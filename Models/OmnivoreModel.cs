@@ -2,9 +2,9 @@
 
 public class OmnivoreModel
 {
-    public string url { get; set; } = String.Empty;
-    public string state { get; set; } = String.Empty;
-    public string labels { get; set; } = String.Empty;
-    public string saved_at { get; set; } = String.Empty;
-    public string published_at { get; set; } = String.Empty;
+    public string Labels { get; set; } = String.Empty;
+    public string PublishedAt { get; set; } = String.Empty;
+    public string SavedAt { get; set; } = String.Empty;
+    public string State { get; set; } = String.Empty;
+    public string Url { get; set; } = String.Empty;
 }
