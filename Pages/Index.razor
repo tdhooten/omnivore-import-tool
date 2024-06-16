@@ -16,7 +16,7 @@
                       TValue="string"
                       Label="Import From"
                       Data="@_formats"
-                      @bind-Value="@_inputFormat"
+            @bind-Value="@_inputFormat"
                       TextSelector="@(p => p.ToString())"
                       ValueSelector="@(p => p.ToString())"
                       Nullable="true"
@@ -53,38 +53,38 @@
         if (String.IsNullOrEmpty(_inputFormat))
         {
             Messenger.AddError("No input format specified!");
-
             return;
         }
-
-        _fileUploading = true;
-
-        foreach (IBrowserFile file in e.GetMultipleFiles(1))
+        else
         {
-            try
-            {
-                using MemoryStream stream = new();
-                await file.OpenReadStream(maxAllowedSize: 10000000).CopyToAsync(stream);
-                Stream result = Converter.ConvertFile(stream, _inputFormat);
+            _fileUploading = true;
 
-                using var streamRef = new DotNetStreamReference(stream: result);
-                await JsRuntime.InvokeVoidAsync("downloadFileFromStream", FileName, streamRef);
-
-                Messenger.AddInformation($"Successfully converted file from {_inputFormat} to Omnivore format.");
-                _fileUploading = false;
-            }
-            catch
+            foreach (var file in e.GetMultipleFiles(1))
             {
-                Messenger.AddError($"Error converting file from {_inputFormat} to Omnivore format!", "Please try again later. If the error continues, contact support for assistance.");
+                try
+                {
+                    using MemoryStream stream = new();
+                    await file.OpenReadStream(maxAllowedSize: 10000000).CopyToAsync(stream);
+                    var result = Converter.ConvertFile(stream, _inputFormat);
+
+                    using var streamRef = new DotNetStreamReference(stream: result);
+                    await JsRuntime.InvokeVoidAsync("downloadFileFromStream", FileName, streamRef);
+
+                    Messenger.AddInformation($"Successfully converted file from {_inputFormat} to Omnivore format.");
+                    _fileUploading = false;
+                }
+                catch
+                {
+                    Messenger.AddError($"Error converting file from {_inputFormat} to Omnivore format!", "Please try again later. If the error continues, contact support for assistance.");
+                }
             }
+
+            _fileUploading = false;
         }
-
-        _fileUploading = false;
     }
 
     internal enum Formats
     {
         Raindrop
     }
-
 }

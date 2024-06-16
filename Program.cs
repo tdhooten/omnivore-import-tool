@@ -1,7 +1,7 @@
 using Havit.Blazor.Components.Web;
 using OmnivoreImportTool.Services;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -12,7 +12,7 @@ builder.Services.AddHxServices();
 builder.Services.AddHxMessenger();
 builder.Services.AddSingleton<ConversionService>();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
